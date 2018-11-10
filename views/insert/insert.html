@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="/css/common.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+</head>
+
+<body>
+    <div class="topbar-wrap white">
+        <div class="topbar-inner clearfix">
+            <div class="topbar-logo-wrap clearfix">
+                <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+                <ul class="navbar-list clearfix">
+                    <li><a class="on" href="index.html">首页</a></li>
+                    <li><a href="#" target="_blank">网站首页</a></li>
+                </ul>
+            </div>
+            <div class="top-info-wrap">
+                <ul class="top-info-list clearfix">
+                    <li><a href="#">管理员</a></li>
+                    <li><a href="#">修改密码</a></li>
+                    <li><a href="#">退出</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container clearfix">
+        <div class="sidebar-wrap">
+            <div class="sidebar-title">
+                <h1>菜单</h1>
+            </div>
+            <div class="sidebar-content">
+                <ul class="sidebar-list">
+                    <li>
+                        <a href="#"><i class="icon-font">&#xe003;</i>常用操作</a>
+                        <ul class="sub-menu">
+                            <li><a href="design.html"><i class="icon-font">&#xe008;</i>作品管理</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="icon-font">&#xe018;</i>系统管理</a>
+                        <ul class="sub-menu">
+                            <li><a href="system.html"><i class="icon-font">&#xe017;</i>系统设置</a></li>
+                            <li><a href="system.html"><i class="icon-font">&#xe037;</i>清理缓存</a></li>
+                            <li><a href="system.html"><i class="icon-font">&#xe046;</i>数据备份</a></li>
+                            <li><a href="system.html"><i class="icon-font">&#xe045;</i>数据还原</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--/sidebar-->
+        <div class="main-wrap">
+            <div class="crumb-wrap">
+                <div class="crumb-list"><i class="icon-font"></i><a href="/jscss/admin/design/">首页</a><span class="crumb-step">&gt;</span><a
+                        class="crumb-name" href="/jscss/admin/design/">作品管理</a><span class="crumb-step">&gt;</span><span>新增作品</span></div>
+            </div>
+            <div class="result-wrap">
+                <div class="result-content">
+                    <form action="/blog/toinsert" method="post" id="myform" name="myform" enctype="multipart/form-data">
+                        <table class="insert-tab" width="100%">
+                            <tbody>
+                                <tr>
+                                    <th width="120"><i class="require-red">*</i>分类：</th>
+                                    <td>
+                                        <select name="colId" id="catid" class="required">
+                                            <option value="">请选择</option>
+                                            <?php foreach($ff as $v){?>
+                                            <option value="<?=$v['id']?>">
+                                                <?=$v['cat_name']?>
+                                            </option>
+                                            <?php }?>
+                                        </select>
+                                        <select name="cat2_id" id="cat2_id">
+                                        </select>
+                                        <select name="cat3_id" id="cat3_id">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><i class="require-red">*</i>标题：</th>
+                                    <td>
+                                        <input class="common-text required" id="title" name="title" size="50" value=""
+                                            type="text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>作者：</th>
+                                    <td><input class="common-text" name="author" size="50" value="admin" type="text"></td>
+                                </tr>
+                                <tr>
+                                    <th><i class="require-red">*</i>缩略图：</th>
+                                    <td><input name="logo" id="" type="file">
+                                        <!--<input type="submit" onclick="submitForm('/jscss/admin/design/upload')" value="上传图片"/>-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>内容：</th>
+                                    <td><textarea name="content" class="common-textarea" id="content" cols="30" style="width: 98%;"
+                                            rows="10"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td>
+                                        <input class="btn btn-primary btn6 mr10" value="提交" type="submit">
+                                        <input class="btn btn6" onClick="history.go(-1)" value="返回" type="button">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--/main-->
+    </div>
+</body>
+
+</html>
+<script src="/js/jquery.min.js"></script>
+<script>
+    // jquery获取id为catid的元素并给它设置一个change事件
+    // change当选中元素的值发生改变他才会触发
+    // 
+    $('#catid').change(function () {
+        // #catid是select框的id (# 是id选择器)
+        // 定义一个变量 保存catid这个元素的value值
+        var id = $('#catid').val();
+        // 固定写法 $.ajax({})  
+        $.ajax({
+            // 请求方式
+            type: 'GET',
+            // 请求地址
+            url: '/Blog/ajax_get_cat?id=' + id,
+            // 返回的参数是json格式
+            // json字符串  json可以转换为数组 ++ [{{}:{}}] 
+            dataType: 'json',
+            // ajax发送请求成功以后执行以下代码
+            // 函数参数是blog控制器返回回来的json类型
+            success: function (data) {
+                // 定义一个字符串
+                var str = '';
+                // 循环data.length 他是一个数组json对象
+                for (var i = 0; i < data.length; i++) {
+                    // 把循环出来的数据放到id为option里面
+                    str += '<option value="' + data[i].id + '">' + data[i].cat_name + '</option>'
+                    // 把字符串放到id里面
+                    $('#cat2_id').html(str);
+                }
+            }
+        })
+        // console.log(465);
+    })
+    $('#cat2_id').change(function () {
+        // #catid是select框的id (# 是id选择器)
+        // 定义一个变量 保存catid这个元素的value值
+        var id = $('#cat2_id').val();
+        // 固定写法 $.ajax({})  
+        $.ajax({
+            // 请求方式
+            type: 'GET',
+            // 请求地址
+            url: '/Blog/ajax_get_cat?id=' + id,
+            // 返回的参数是json格式
+            // json字符串  json可以转换为数组 ++ [{{}:{}}] 
+            dataType: 'json',
+            // ajax发送请求成功以后执行以下代码
+            // 函数参数是blog控制器返回回来的json类型
+            success: function (data) {
+                // 定义一个字符串
+                var str = '';
+                // 循环data.length 他是一个数组json对象
+                for (var i = 0; i < data.length; i++) {
+                    // 把循环出来的数据放到id为option里面
+                    str += '<option value="' + data[i].id + '">' + data[i].cat_name + '</option>'
+                    // 把字符串放到id里面
+                    $('#cat3_id').html(str);
+                }
+            }
+        })
+        // console.log(465);
+    })
+</script>
